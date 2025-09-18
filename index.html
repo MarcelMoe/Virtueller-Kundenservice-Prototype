@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kundendienst-Assistent – Vanilla JS</title>
+  <style>
+    :root { --bg:#ffffff; --ink:#0f172a; --muted:#64748b; --border:#e2e8f0; --soft:#f8fafc; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji"; color:var(--ink); background:var(--bg); }
+    .app { min-height: 100vh; display:flex; justify-content:center; }
+    .phone { width: 375px; border:1px solid var(--border); box-shadow: 0 10px 30px rgba(2,6,23,.06); display:flex; flex-direction:column; background:#fff; }
+    .p { padding: 24px; }
+    h1 { font-size: 20px; font-weight: 700; margin:0 0 8px; text-align:center; }
+    h2 { font-size: 18px; font-weight: 700; margin:0 0 8px; }
+    h3 { font-size: 16px; font-weight: 700; margin:0 0 8px; }
+    p.muted { color:var(--muted); margin: 0 0 12px; text-align:center; }
+    textarea { width:100%; min-height:120px; padding:12px; border:1px solid var(--border); border-radius:12px; font: inherit; resize: vertical; }
+    .btn { appearance:none; border:1px solid var(--ink); background:var(--ink); color:#fff; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer; }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-outline { background:#fff; color:var(--ink); border:1px solid var(--border); }
+    .row { display:flex; gap:8px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:12px; }
+    .soft { background:var(--soft); }
+    .meta { font-size:12px; color:var(--muted); margin:0; }
+    .badges { display:flex; flex-wrap:wrap; gap:6px; }
+    .badge { border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; background:#f8fafc; color:#334155; }
+    .toprow { display:flex; align-items:center; gap:8px; }
+    .back { background:none; border:none; color:var(--muted); padding:0; cursor:pointer; font: inherit; }
+    .spacer { height: 6px; }
+    .center { text-align:center; }
+    .progress { font-size:12px; color:var(--muted); }
+    .illustration { margin:8px 0 12px; border:1px solid var(--border); border-radius:12px; max-height:200px; overflow:hidden; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="phone">
+      <!-- Screen 1: Problem beschreiben -->
+      <section id="screen-start" class="p">
+        <h1>Virtueller Kundendienst</h1>
+        <p class="muted">Beschreibe kurz dein Problem oder gib einen Fehlercode an (z. B. 101).</p>
+        <textarea id="beschreibung" placeholder="z. B.: Drucker zeigt Fehlercode 101 / Papierstau im Ausgabefach"></textarea>
+        <div class="spacer"></div>
+        <button id="startBtn" class="btn" type="button">Starten</button>
+      </section>
+
+      <!-- Screen 2: Erklärung + Schritt-für-Schritt -->
+      <section id="screen-assist" class="p hidden">
+        <div class="toprow">
+          <button id="backBtn" class="back" type="button">← Zurück</button>
+        </div>
+        <div class="spacer"></div>
+
+        <div>
+          <h2>Problemerklärung</h2>
+          <p id="detected" class="meta"></p>
+          <div id="matchedWrap" class="badges"></div>
+          <div class="card soft" style="margin-top:8px;">
+            <p id="title" style="margin:0 0 6px; font-weight:600"></p>
+            <ul id="erklaerung" style="margin:0 0 0 18px; padding:0;">
+              <!-- bullets injected -->
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <h3>Anleitung</h3>
+          <div class="card">
+            <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span id="progress" class="progress"></span>
+              <button id="speakBtn" class="back" type="button">🔊 Vorlesen</button>
+            </div>
+            <div id="illustration" class="illustration"></div>
+            <p id="stepText" style="margin:0 0 10px;"></p>
+            <div class="row">
+              <button id="prevBtn" class="btn btn-outline" type="button">Zurück</button>
+              <button id="nextBtn" class="btn" type="button">Weiter</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <template id="svg-step1">
+    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
+      <rect x="40" y="90" width="120" height="30" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
+      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
+      <rect x="170" y="85" width="10" height="40" fill="#1f2937"/>
+      <path d="M250 130 L290 150 L310 120" fill="none" stroke="#1f2937" stroke-width="6" stroke-linecap="round"/>
+      <text x="20" y="25" font-size="14" fill="#1f2937">1) Ausschalten & Stecker ziehen</text>
+    </svg>
+  </template>
+  <template id="svg-step2">
+    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
+      <rect x="40" y="90" width="120" height="30" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
+      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
+      <polygon points="60,70 180,70 180,85 60,85" fill="#1f2937"/>
+      <rect x="55" y="85" width="90" height="28" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/>
+      <path d="M45 110 C65 100, 75 100, 95 110" fill="none" stroke="#1f2937" stroke-width="4"/>
+      <text x="20" y="25" font-size="14" fill="#1f2937">2) Klappen öffnen & Papier entfernen</text>
+    </svg>
+  </template>
+  <template id="svg-step3">
+    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
+      <rect x="40" y="95" width="120" height="20" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/>
+      <rect x="40" y="100" width="120" height="20" fill="#f8fafc" stroke="#1f2937" stroke-width="2"/>
+      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
+      <circle cx="260" cy="120" r="12" fill="none" stroke="#1f2937" stroke-width="3"/>
+      <path d="M255 117 L260 123 L272 110" fill="none" stroke="#1f2937" stroke-width="4"/>
+      <text x="20" y="25" font-size="14" fill="#1f2937">3) Papier einlegen & neu starten</text>
+    </svg>
+  </template>
+
+  <script>
+    // --- Wissensbasis & Regeln ---
+    const KB = {
+      "101": {
+        title: "Papierstau im Einzug (Fehler 101)",
+        erklaerung: [
+          "Der Drucker meldet Fehlercode 101, weil der Papiereinzug blockiert ist.",
+          "Meist steckt ein Blatt schief oder kleine Papierreste behindern den Transport.",
+          "Das lässt sich mit wenigen Handgriffen lösen."
+        ],
+        steps: [
+          { text: "Drucker ausschalten und Netzstecker ziehen.", svg: "svg-step1" },
+          { text: "Alle Klappen/Papierfächer öffnen und Papier samt Resten vorsichtig in Laufrichtung entfernen.", svg: "svg-step2" },
+          { text: "Papierstapel sauber ausrichten, Fächer schließen, Strom verbinden und Drucker neu starten.", svg: "svg-step3" }
+        ],
+        keywords: ["papierstau", "blatt hängt", "papier klemmt", "einzug blockiert"]
+      }
+    };
+
+    const RULES = [
+      { code: "101", keywords: ["papierstau","papier steckt","papier klemmt","papierreste","einzug blockiert","papiereinzug","zieht kein papier","ausgabefach","stau","blockiert","paper jam","jammed","stuck paper","paper feed","feed error"] }
+    ];
+
+    function extractCode(text) {
+      const m = text.match(/\b(\d{3})\b/);
+      return m ? m[1] : null;
+    }
+
+    function inferCodeFromText(text) {
+      const norm = text.toLowerCase();
+      let best = { code: null, confidence: 0, matched: [] };
+      for (const rule of RULES) {
+        const hits = rule.keywords.filter(kw => norm.includes(kw));
+        const score = hits.length;
+        if (score > best.confidence) best = { code: rule.code, confidence: score, matched: hits };
+      }
+      if (best.confidence === 0) return { code: null, confidence: 0, matched: [] };
+      return best;
+    }
+
+    // --- UI-Logik ---
+    const qs = (s) => document.querySelector(s);
+    const screenStart = qs('#screen-start');
+    const screenAssist = qs('#screen-assist');
+
+    const beschreibungEl = qs('#beschreibung');
+    const startBtn = qs('#startBtn');
+    const backBtn = qs('#backBtn');
+
+    const detectedEl = qs('#detected');
+    const matchedWrap = qs('#matchedWrap');
+    const titleEl = qs('#title');
+    const erklaerungEl = qs('#erklaerung');
+    const progressEl = qs('#progress');
+    const illustrationEl = qs('#illustration');
+    const stepTextEl = qs('#stepText');
+    const prevBtn = qs('#prevBtn');
+    const nextBtn = qs('#nextBtn');
+    const speakBtn = qs('#speakBtn');
+
+    let current = { code: null, inferred: { code:null, confidence:0, matched:[] }, entry: null, stepIndex: 0 };
+
+    function setScreen(name) {
+      if (name === 'start') {
+        screenStart.classList.remove('hidden');
+        screenAssist.classList.add('hidden');
+      } else {
+        screenAssist.classList.remove('hidden');
+        screenStart.classList.add('hidden');
+      }
+    }
+
+    function startAssist() {
+      const text = beschreibungEl.value || '';
+      const code = extractCode(text);
+      const inferred = inferCodeFromText(text);
+      const effectiveCode = code || inferred.code || null;
+      const entry = effectiveCode && KB[effectiveCode] ? KB[effectiveCode] : {
+        title: 'Allgemeine Prüfung',
+        erklaerung: [
+          'Ich habe deine Beschreibung erfasst. Einen konkreten Fehlercode oder klare Stichworte konnte ich nicht erkennen.',
+          'Wir gehen die häufigsten Ursachen für Papierstau/Transportprobleme durch.',
+          'Führe die folgenden Schritte nacheinander aus.'
+        ],
+        steps: [
+          { text: 'Gerät ausschalten, Kabel prüfen und 30 Sekunden warten.' },
+          { text: 'Papierweg kontrollieren: Fächer/Klappen öffnen, steckendes Papier in Laufrichtung entfernen.' },
+          { text: 'Frischen Papierstapel bündig einlegen (nicht zu voll) und Testdruck starten.' }
+        ],
+        keywords: []
+      };
+
+      current = { code, inferred, entry, stepIndex: 0 };
+      updateAssistUI();
+      setScreen('assist');
+    }
+
+    function updateAssistUI() {
+      const { code, inferred, entry, stepIndex } = current;
+      // Header/Meta
+      if (code) detectedEl.textContent = `Erkannter Code: ${code}`;
+      else if (inferred.code) detectedEl.textContent = `Aus Text abgeleitet: ${inferred.code} (${inferred.confidence >= 2 ? 'hoch' : 'mittel'}e Sicherheit)`;
+      else detectedEl.textContent = 'Kein Code/Schlüsselwort erkannt – allgemeine Hilfe';
+
+      matchedWrap.innerHTML = '';
+      if (inferred.matched && inferred.matched.length) {
+        inferred.matched.forEach(m => {
+          const span = document.createElement('span');
+          span.className = 'badge';
+          span.textContent = m;
+          matchedWrap.appendChild(span);
+        });
+      }
+
+      // Erklärung
+      titleEl.textContent = entry.title;
+      erklaerungEl.innerHTML = '';
+      entry.erklaerung.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        erklaerungEl.appendChild(li);
+      });
+
+      // Anleitung / Schritt
+      progressEl.textContent = `Schritt ${stepIndex + 1} von ${entry.steps.length}`;
+      stepTextEl.textContent = entry.steps[stepIndex].text;
+
+      illustrationEl.innerHTML = '';
+      const svgId = entry.steps[stepIndex].svg;
+      if (svgId) {
+        const tpl = document.getElementById(svgId);
+        if (tpl && 'content' in tpl) {
+          illustrationEl.appendChild(tpl.content.cloneNode(true));
+        }
+      }
+
+      prevBtn.disabled = stepIndex === 0;
+      nextBtn.disabled = stepIndex >= entry.steps.length - 1;
+    }
+
+    function nextStep() {
+      if (current.stepIndex < current.entry.steps.length - 1) {
+        current.stepIndex++;
+        updateAssistUI();
+      }
+    }
+    function prevStep() {
+      if (current.stepIndex > 0) {
+        current.stepIndex--;
+        updateAssistUI();
+      }
+    }
+
+    function speakCurrent() {
+      if (!('speechSynthesis' in window)) return;
+      const text = current.entry.steps[current.stepIndex].text;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    // --- Events ---
+    startBtn.addEventListener('click', startAssist);
+    backBtn.addEventListener('click', () => setScreen('start'));
+    nextBtn.addEventListener('click', nextStep);
+    prevBtn.addEventListener('click', prevStep);
+    speakBtn.addEventListener('click', speakCurrent);
+  </script>
+</body>
+</html>
