@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preise - Print-Doc AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f0f2f5; color: #343a40; text-align: center; }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .logo { font-size: 26px; font-weight: 700; color: #007bff; text-transform: uppercase; letter-spacing: 1px; }
+        nav a { margin-left: 30px; text-decoration: none; color: #555; font-weight: 500; font-size: 15px; }
+        nav a:hover { color: #007bff; }
+        h1 { color: #007bff; font-size: 38px; margin-top: 50px; margin-bottom: 20px; }
+        .price-plans { display: flex; justify-content: center; align-items: stretch; flex-wrap: wrap; gap: 30px; margin-top: 40px; }
+        .plan { background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); max-width: 320px; width: 100%; transition: transform 0.3s ease; }
+        .plan:hover { transform: translateY(-10px); }
+        .plan.featured { border: 2px solid #007bff; transform: scale(1.05); }
+        .plan.featured:hover { transform: translateY(-10px) scale(1.05); }
+        .plan h2 { color: #343a40; margin-top: 0; font-size: 28px; }
+        .price { font-size: 48px; font-weight: 700; color: #007bff; margin-bottom: 20px; }
+        .price small { font-size: 18px; color: #888; }
+        .plan ul { list-style: none; padding: 0; text-align: left; margin-bottom: 30px; }
+        .plan li { margin-bottom: 10px; color: #555; }
+        .plan li i { color: #28a745; margin-right: 10px; }
+        .button { background-color: #007bff; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background-color 0.3s ease; display: inline-block; }
+        .button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo">Print-Doc AI</a>
+            <nav>
+                <a href="features.html">Features</a>
+                <a href="preise.html">Preise</a>
+                <a href="#" onclick="alert('Login-Funktion in Entwicklung.')">Mein Konto</a>
+            </nav>
+        </header>
+    </div>
+    <main class="container">
+        <h1>Unsere Preise</h1>
+        <p>Wählen Sie den Plan, der am besten zu Ihren Bedürfnissen passt.</p>
+        <div class="price-plans">
+            <div class="plan">
+                <h2>Basis</h2>
+                <div class="price">0,00€ <small>/ Monat</small></div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i>3 kostenlose Analysen pro Monat</li>
+                    <li><i class="fas fa-check-circle"></i>Standard-Lösungsvorschläge</li>
+                    <li><i class="fas fa-check-circle"></i>E-Mail-Support</li>
+                </ul>
+                <a href="#" class="button">Jetzt starten</a>
+            </div>
+            <div class="plan featured">
+                <h2>Plus</h2>
+                <div class="price">1,99€</div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i><strong>Unbegrenzt</strong> Analysen pro Monat</li>
+                    <li><i class="fas fa-check-circle"></i>Lösungen mit Videos</li>
+                    <li><i class="fas fa-check-circle"></i>Priorisierter E-Mail-Support</li>
+                    <li><i class="fas fa-check-circle"></i>Diagnose-Verlauf speichern</li>
+                </ul>
+                <a href="#" class="button">Plus wählen</a>
+            </div>
+            <div class="plan">
+                <h2>Business</h2>
+                <div class="price">29,99€</div>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i>Alle "Plus"-Funktionen</li>
+                    <li><i class="fas fa-check-circle"></i>Support für bis zu 10 Geräte</li>
+                    <li><i class="fas fa-check-circle"></i>Telefon- & Chat-Support</li>
+                    <li><i class="fas fa-check-circle"></i>Nutzungs-Statistiken</li>
+                </ul>
+                <a href="#" class="button">Anfragen</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lösung gefunden! - Print-Doc AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f0f2f5; color: #343a40; }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .logo { font-size: 26px; font-weight: 700; color: #007bff; text-transform: uppercase; letter-spacing: 1px; text-decoration: none;}
+        nav a { margin-left: 30px; text-decoration: none; color: #555; font-weight: 500; font-size: 15px; }
+        .solution-box { padding: 50px; background-color: #ffffff; border-radius: 12px; margin-top: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; }
+        .solution-box h1 { font-size: 32px; color: #28a745; margin-bottom: 10px; }
+        .solution-box p { font-size: 18px; color: #555; margin-bottom: 30px; }
+        .solution-box .solution-details { text-align: left; }
+        .solution-box .solution-details h2 { color: #007bff; margin-top: 25px; }
+        .solution-box .solution-details p, .solution-box .solution-details li { line-height: 1.8; color: #333; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; margin-top: 20px; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .button { background-color: #007bff; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background-color 0.3s ease; display: inline-block; margin-top: 30px; cursor: pointer; border: none; }
+        .button:hover { background-color: #0056b3; }
+        
+        /* New styles for the step-by-step list */
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .step-list li {
+            background-color: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            text-align: left;
+        }
+        .step-list li .step-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #007bff;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo">Print-Doc AI</a>
+            <nav>
+                <a href="features.html">Features</a>
+                <a href="preise.html">Preise</a>
+                <a href="#" onclick="alert('Login-Funktion in Entwicklung.')">Mein Konto</a>
+            </nav>
+        </header>
+    </div>
+    <main class="container">
+        <div class="solution-box">
+            <h1>Lösung gefunden!</h1>
+            <p>Basierend auf Ihrer Diagnose haben wir die wahrscheinlichste Ursache und Lösung gefunden.</p>
+            <div id="solution-content">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+            <button id="read-aloud-btn" class="button">🔊 Anleitung vorlesen</button>
+        </div>
+    </main>
+    <script>
+        const solutions = {
+            '100': {
+                headline: 'Tausche die leere Druckerpatrone aus!',
+                solutionSteps: [
+                    'Öffne die Abdeckung deines Druckers.',
+                    'Warte, bis der Patronenwagen stoppt.',
+                    'Entferne die leere Patrone vorsichtig.',
+                    'Setze die neue Patrone ein, bis sie einrastet.',
+                    'Schließe die Abdeckung und warte, bis der Drucker die neue Patrone erkennt.'
+                ],
+                videoUrl: 'https://www.youtube.com/embed/nU2-0tW5j98'
+            },
+            '101': {
+                headline: 'Entferne den Papierstau!',
+                solutionSteps: [
+                    'Schalte den Drucker aus und ziehe den Netzstecker.',
+                    'Öffne alle Abdeckungen und entnimm vorsichtig sichtbare Papierreste.',
+                    'Überprüfe den Papiereinzug und die Ausgabefächer auf kleine Reste.',
+                    'Schließe alle Abdeckungen wieder und schalte den Drucker ein.'
+                ],
+                videoUrl: 'https://www.youtube.com/embed/fT4FmRjQY5s'
+            },
+            '102': {
+                headline: 'Lege mehr DIN A4-Papier in den Drucker!',
+                solutionSteps: [
+                    'Öffne das Papierfach.',
+                    'Fülle neues, unbeschädigtes DIN A4-Papier ein. Achte darauf, dass es gerade liegt.',
+                    'Schließe das Papierfach und bestätige die Papiereinstellungen auf dem Display deines Druckers.'
+                ],
+                videoUrl: 'https://www.youtube.com/embed/g2JmP5_UoGk'
+            }
+        };
+
+        function loadSolution(errorCode) {
+            const solution = solutions[errorCode] || solutions['101'];
+            
+            // Build the steps list dynamically
+            const stepsList = solution.solutionSteps.map((step, index) => {
+                return `<li><div class="step-number">${index + 1}.</div><div>${step}</div></li>`;
+            }).join('');
+
+            document.getElementById('solution-content').innerHTML = `
+                <h2>${solution.headline}</h2>
+                <ul class="step-list">${stepsList}</ul>
+                <h3>Visuelle Anleitung</h3>
+                <div class="video-container">
+                    <iframe src="${solution.videoUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>`;
+        }
+
+        window.onload = function() {
+            const selectedError = localStorage.getItem('selectedErrorCode');
+            loadSolution(selectedError);
+
+            const readAloudButton = document.getElementById('read-aloud-btn');
+            if ('speechSynthesis' in window) {
+                readAloudButton.addEventListener('click', function() {
+                    if (window.speechSynthesis.speaking) {
+                        window.speechSynthesis.cancel();
+                        readAloudButton.innerHTML = '🔊 Anleitung vorlesen';
+                        return;
+                    }
+                    const solutionTextElement = document.getElementById('solution-content');
+                    const textToRead = solutionTextElement.innerText;
+                    const utterance = new SpeechSynthesisUtterance(textToRead);
+                    const currentLang = document.documentElement.lang || 'de-DE';
+                    utterance.lang = currentLang;
+                    utterance.onstart = function() { readAloudButton.innerHTML = '⏹️ Stopp'; }
+                    utterance.onend = function() { readAloudButton.innerHTML = '🔊 Anleitung vorlesen'; }
+                    window.speechSynthesis.speak(utterance);
+                });
+            } else {
+                readAloudButton.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>

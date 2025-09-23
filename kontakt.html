@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt - Print-Doc AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f0f2f5; color: #343a40; }
+        .container { max-width: 800px; margin: 40px auto; padding: 40px; background-color: #fff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; text-align: center; }
+        .contact-info, .contact-form { margin-top: 30px; }
+        .contact-form label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .contact-form input, .contact-form textarea { width: 98%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Poppins', sans-serif; }
+        .button { background-color: #007bff; color: #fff; padding: 15px 30px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: background-color: 0.3s ease; }
+        .button:hover { background-color: #0056b3; }
+        a { color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kontaktieren Sie uns</h1>
+        <p style="text-align:center;">Wir freuen uns auf Ihre Nachricht!</p>
+        <div class="contact-info">
+            <h3>Print-Doc AI Solutions</h3>
+            <p>Musterstraße 123<br>37688 Beverungen<br>Deutschland</p>
+        </div>
+        <div class="contact-form">
+            <h2>Schreiben Sie uns eine Nachricht</h2>
+            <form action="#" method="post" onsubmit="alert('Prototyp: Ihre Nachricht wurde (nicht wirklich) gesendet!'); return false;">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">E-Mail:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Ihre Nachricht:</label>
+                <textarea id="message" name="message" rows="6" required></textarea>
+                <button type="submit" class="button">Nachricht senden</button>
+            </form>
+        </div>
+        <br>
+        <a href="prototyp.html">Zurück zur Startseite</a>
+    </div>
+</body>
+</html>

@@ -1,290 +1,249 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kundendienst-Assistent – Vanilla JS</title>
-  <style>
-    :root { --bg:#ffffff; --ink:#0f172a; --muted:#64748b; --border:#e2e8f0; --soft:#f8fafc; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji"; color:var(--ink); background:var(--bg); }
-    .app { min-height: 100vh; display:flex; justify-content:center; }
-    .phone { width: 375px; border:1px solid var(--border); box-shadow: 0 10px 30px rgba(2,6,23,.06); display:flex; flex-direction:column; background:#fff; }
-    .p { padding: 24px; }
-    h1 { font-size: 20px; font-weight: 700; margin:0 0 8px; text-align:center; }
-    h2 { font-size: 18px; font-weight: 700; margin:0 0 8px; }
-    h3 { font-size: 16px; font-weight: 700; margin:0 0 8px; }
-    p.muted { color:var(--muted); margin: 0 0 12px; text-align:center; }
-    textarea { width:100%; min-height:120px; padding:12px; border:1px solid var(--border); border-radius:12px; font: inherit; resize: vertical; }
-    .btn { appearance:none; border:1px solid var(--ink); background:var(--ink); color:#fff; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer; }
-    .btn:disabled { opacity:.5; cursor:not-allowed; }
-    .btn-outline { background:#fff; color:var(--ink); border:1px solid var(--border); }
-    .row { display:flex; gap:8px; }
-    .card { background:#fff; border:1px solid var(--border); border-radius:16px; padding:12px; }
-    .soft { background:var(--soft); }
-    .meta { font-size:12px; color:var(--muted); margin:0; }
-    .badges { display:flex; flex-wrap:wrap; gap:6px; }
-    .badge { border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:12px; background:#f8fafc; color:#334155; }
-    .toprow { display:flex; align-items:center; gap:8px; }
-    .back { background:none; border:none; color:var(--muted); padding:0; cursor:pointer; font: inherit; }
-    .spacer { height: 6px; }
-    .center { text-align:center; }
-    .progress { font-size:12px; color:var(--muted); }
-    .illustration { margin:8px 0 12px; border:1px solid var(--border); border-radius:12px; max-height:200px; overflow:hidden; }
-    .hidden { display:none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print-Doc AI - Ihr KI-Drucker-Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            background-color: #f0f2f5;
+            color: #343a40; 
+            line-height: 1.6; 
+            overflow-x: hidden;
+        }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 0; 
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { font-size: 26px; font-weight: 700; color: #007bff; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; }
+        nav { display: flex; align-items: center; }
+        nav a { 
+            margin-left: 30px; 
+            text-decoration: none; 
+            color: #555; 
+            font-weight: 500; 
+            font-size: 15px;
+            transition: color 0.3s ease, transform 0.2s ease; 
+        }
+        nav a:hover { color: #007bff; transform: translateY(-2px); }
+        #google_translate_element { margin-left: 30px; }
+        .skiptranslate { display: none !important; }
+        body { top: 0 !important; }
+
+        .hero { 
+            position: relative;
+            text-align: center; 
+            padding: 150px 20px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1549646002-f19b2512dd46?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
+            color: #ffffff;
+            border-radius: 12px; 
+            margin-top: 25px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+        .hero h1 { 
+            font-size: 58px; 
+            margin-bottom: 20px; 
+            line-height: 1.2;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p { 
+            font-size: 22px; 
+            color: #e0e0e0; 
+            margin-bottom: 40px; 
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta-button { 
+            display: inline-block; 
+            background-color: #28a745;
+            color: #ffffff; 
+            padding: 18px 45px;
+            font-size: 20px; 
+            font-weight: 600; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+        .cta-button:hover { background-color: #218838; transform: translateY(-5px); box-shadow: 0 8px 20px rgba(40, 167, 69, 0.6); }
+        
+        .section { 
+            padding: 80px 20px; 
+            text-align: center; 
+            margin-top: 40px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        }
+        .section-title { 
+            font-size: 42px; 
+            margin-bottom: 60px; 
+            color: #212529; 
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -15px;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #007bff;
+            border-radius: 2px;
+        }
+        .how-it-works .steps-grid {
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .how-it-works .step {
+            flex: 1;
+            min-width: 280px;
+            padding: 30px;
+        }
+        .how-it-works .step .icon {
+            font-size: 50px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .how-it-works .step h3 {
+            font-size: 22px;
+            color: #212529;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .testimonial-section { background-color: #e9ecef; }
+        .testimonial { max-width: 700px; margin: 0 auto; }
+        .testimonial blockquote { 
+            font-size: 24px; 
+            font-style: italic; 
+            color: #495057; 
+            border-left: 6px solid #007bff; 
+            padding-left: 25px; 
+            margin: 0 0 20px 0; 
+            line-height: 1.4;
+            text-align: left;
+        }
+        .testimonial-author { 
+            margin-top: 25px; 
+            font-weight: 600; 
+            color: #343a40; 
+            font-size: 18px;
+            text-align: right;
+        }
+
+        footer { text-align: center; padding: 40px 0; margin-top: 40px; border-top: 1px solid #dee2e6; background-color: #e9ecef; }
+        footer p { margin: 10px 0; color: #6c757d; }
+        footer a { color: #6c757d; margin: 0 10px; text-decoration: none; }
+        .social-icons { margin: 20px 0; }
+        .social-icons a {
+            font-size: 28px;
+            margin: 0 18px;
+            color: #6c757d;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .social-icons a:hover {
+            color: #007bff;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <div class="phone">
-      <!-- Screen 1: Problem beschreiben -->
-      <section id="screen-start" class="p">
-        <h1>Virtueller Kundendienst</h1>
-        <p class="muted">Beschreibe kurz dein Problem oder gib einen Fehlercode an (z. B. 101).</p>
-        <textarea id="beschreibung" placeholder="z. B.: Drucker zeigt Fehlercode 101 / Papierstau im Ausgabefach"></textarea>
-        <div class="spacer"></div>
-        <button id="startBtn" class="btn" type="button">Starten</button>
-      </section>
-
-      <!-- Screen 2: Erklärung + Schritt-für-Schritt -->
-      <section id="screen-assist" class="p hidden">
-        <div class="toprow">
-          <button id="backBtn" class="back" type="button">← Zurück</button>
-        </div>
-        <div class="spacer"></div>
-
-        <div>
-          <h2>Problemerklärung</h2>
-          <p id="detected" class="meta"></p>
-          <div id="matchedWrap" class="badges"></div>
-          <div class="card soft" style="margin-top:8px;">
-            <p id="title" style="margin:0 0 6px; font-weight:600"></p>
-            <ul id="erklaerung" style="margin:0 0 0 18px; padding:0;">
-              <!-- bullets injected -->
-            </ul>
-          </div>
-        </div>
-
-        <div style="margin-top:12px;">
-          <h3>Anleitung</h3>
-          <div class="card">
-            <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span id="progress" class="progress"></span>
-              <button id="speakBtn" class="back" type="button">🔊 Vorlesen</button>
-            </div>
-            <div id="illustration" class="illustration"></div>
-            <p id="stepText" style="margin:0 0 10px;"></p>
-            <div class="row">
-              <button id="prevBtn" class="btn btn-outline" type="button">Zurück</button>
-              <button id="nextBtn" class="btn" type="button">Weiter</button>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div class="container">
+        <header>
+            <a href="prototyp.html" class="logo">Print-Doc AI</a>
+            <nav>
+                <a href="features.html">Features</a>
+                <a href="preise.html">Preise</a>
+                <a href="#" onclick="alert('Login-Funktion in Entwicklung.')">Mein Konto</a>
+                <div id="google_translate_element"></div>
+            </nav>
+        </header>
     </div>
-  </div>
+    <main class="container">
+        <section class="hero">
+            <h1>Schluss mit Drucker-Frust und kryptischen Fehlercodes.</h1>
+            <p>Ihre Drucker-Fehlermeldung in 3 einfachen Schritten gelöst.<br>Starten Sie jetzt Ihre kostenlose KI-Analyse.</p>
+            <a href="diagnose.html" class="cta-button">Jetzt kostenlos Fehlerdiagnose starten</a>
+        </section>
+        
+        <section class="section how-it-works">
+            <h2 class="section-title">Wie es funktioniert</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="icon"><i class="fas fa-camera"></i></div>
+                    <h3>1. Fehler erfassen</h3>
+                    <p>Wählen Sie den Fehlercode manuell oder scannen Sie ihn einfach per Kamera ab.</p>
+                </div>
+                <div class="step">
+                    <div class="icon"><i class="fas fa-brain"></i></div>
+                    <h3>2. KI analysiert</h3>
+                    <p>Unsere intelligente KI analysiert den Fehlercode und Ihr Druckermodell in Sekundenschnelle.</p>
+                </div>
+                <div class="step">
+                    <div class="icon"><i class="fas fa-tools"></i></div>
+                    <h3>3. Problem lösen</h3>
+                    <p>Erhalten Sie eine klare Schritt-für-Schritt-Anleitung mit Video und optionaler Sprachausgabe.</p>
+                </div>
+            </div>
+        </section>
 
-  <template id="svg-step1">
-    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
-      <rect x="40" y="90" width="120" height="30" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
-      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
-      <rect x="170" y="85" width="10" height="40" fill="#1f2937"/>
-      <path d="M250 130 L290 150 L310 120" fill="none" stroke="#1f2937" stroke-width="6" stroke-linecap="round"/>
-      <text x="20" y="25" font-size="14" fill="#1f2937">1) Ausschalten & Stecker ziehen</text>
-    </svg>
-  </template>
-  <template id="svg-step2">
-    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
-      <rect x="40" y="90" width="120" height="30" fill="#f8fafc" stroke="#1f2937" stroke-width="3"/>
-      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
-      <polygon points="60,70 180,70 180,85 60,85" fill="#1f2937"/>
-      <rect x="55" y="85" width="90" height="28" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/>
-      <path d="M45 110 C65 100, 75 100, 95 110" fill="none" stroke="#1f2937" stroke-width="4"/>
-      <text x="20" y="25" font-size="14" fill="#1f2937">2) Klappen öffnen & Papier entfernen</text>
-    </svg>
-  </template>
-  <template id="svg-step3">
-    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="40" width="200" height="100" rx="8" fill="#fff" stroke="#1f2937" stroke-width="3"/>
-      <rect x="40" y="95" width="120" height="20" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/>
-      <rect x="40" y="100" width="120" height="20" fill="#f8fafc" stroke="#1f2937" stroke-width="2"/>
-      <rect x="35" y="120" width="130" height="10" fill="#1f2937"/>
-      <circle cx="260" cy="120" r="12" fill="none" stroke="#1f2937" stroke-width="3"/>
-      <path d="M255 117 L260 123 L272 110" fill="none" stroke="#1f2937" stroke-width="4"/>
-      <text x="20" y="25" font-size="14" fill="#1f2937">3) Papier einlegen & neu starten</text>
-    </svg>
-  </template>
+        <section class="section testimonial-section">
+            <h2 class="section-title">Was unsere Nutzer sagen</h2>
+            <div class="testimonial">
+                <blockquote>"Der Fehlercode 101 hat mich wahnsinnig gemacht. Mit Print-Doc AI habe ich die Lösung in zwei Minuten gefunden und der Drucker lief wieder. Absolut unglaublich!"</blockquote>
+                <p class="testimonial-author">- J. S. aus Berlin</p>
+            </div>
+        </section>
 
-  <script>
-    // --- Wissensbasis & Regeln ---
-    const KB = {
-      "101": {
-        title: "Papierstau im Einzug (Fehler 101)",
-        erklaerung: [
-          "Der Drucker meldet Fehlercode 101, weil der Papiereinzug blockiert ist.",
-          "Meist steckt ein Blatt schief oder kleine Papierreste behindern den Transport.",
-          "Das lässt sich mit wenigen Handgriffen lösen."
-        ],
-        steps: [
-          { text: "Drucker ausschalten und Netzstecker ziehen.", svg: "svg-step1" },
-          { text: "Alle Klappen/Papierfächer öffnen und Papier samt Resten vorsichtig in Laufrichtung entfernen.", svg: "svg-step2" },
-          { text: "Papierstapel sauber ausrichten, Fächer schließen, Strom verbinden und Drucker neu starten.", svg: "svg-step3" }
-        ],
-        keywords: ["papierstau", "blatt hängt", "papier klemmt", "einzug blockiert"]
-      }
-    };
-
-    const RULES = [
-      { code: "101", keywords: ["papierstau","papier steckt","papier klemmt","papierreste","einzug blockiert","papiereinzug","zieht kein papier","ausgabefach","stau","blockiert","paper jam","jammed","stuck paper","paper feed","feed error"] }
-    ];
-
-    function extractCode(text) {
-      const m = text.match(/\b(\d{3})\b/);
-      return m ? m[1] : null;
-    }
-
-    function inferCodeFromText(text) {
-      const norm = text.toLowerCase();
-      let best = { code: null, confidence: 0, matched: [] };
-      for (const rule of RULES) {
-        const hits = rule.keywords.filter(kw => norm.includes(kw));
-        const score = hits.length;
-        if (score > best.confidence) best = { code: rule.code, confidence: score, matched: hits };
-      }
-      if (best.confidence === 0) return { code: null, confidence: 0, matched: [] };
-      return best;
-    }
-
-    // --- UI-Logik ---
-    const qs = (s) => document.querySelector(s);
-    const screenStart = qs('#screen-start');
-    const screenAssist = qs('#screen-assist');
-
-    const beschreibungEl = qs('#beschreibung');
-    const startBtn = qs('#startBtn');
-    const backBtn = qs('#backBtn');
-
-    const detectedEl = qs('#detected');
-    const matchedWrap = qs('#matchedWrap');
-    const titleEl = qs('#title');
-    const erklaerungEl = qs('#erklaerung');
-    const progressEl = qs('#progress');
-    const illustrationEl = qs('#illustration');
-    const stepTextEl = qs('#stepText');
-    const prevBtn = qs('#prevBtn');
-    const nextBtn = qs('#nextBtn');
-    const speakBtn = qs('#speakBtn');
-
-    let current = { code: null, inferred: { code:null, confidence:0, matched:[] }, entry: null, stepIndex: 0 };
-
-    function setScreen(name) {
-      if (name === 'start') {
-        screenStart.classList.remove('hidden');
-        screenAssist.classList.add('hidden');
-      } else {
-        screenAssist.classList.remove('hidden');
-        screenStart.classList.add('hidden');
-      }
-    }
-
-    function startAssist() {
-      const text = beschreibungEl.value || '';
-      const code = extractCode(text);
-      const inferred = inferCodeFromText(text);
-      const effectiveCode = code || inferred.code || null;
-      const entry = effectiveCode && KB[effectiveCode] ? KB[effectiveCode] : {
-        title: 'Allgemeine Prüfung',
-        erklaerung: [
-          'Ich habe deine Beschreibung erfasst. Einen konkreten Fehlercode oder klare Stichworte konnte ich nicht erkennen.',
-          'Wir gehen die häufigsten Ursachen für Papierstau/Transportprobleme durch.',
-          'Führe die folgenden Schritte nacheinander aus.'
-        ],
-        steps: [
-          { text: 'Gerät ausschalten, Kabel prüfen und 30 Sekunden warten.' },
-          { text: 'Papierweg kontrollieren: Fächer/Klappen öffnen, steckendes Papier in Laufrichtung entfernen.' },
-          { text: 'Frischen Papierstapel bündig einlegen (nicht zu voll) und Testdruck starten.' }
-        ],
-        keywords: []
-      };
-
-      current = { code, inferred, entry, stepIndex: 0 };
-      updateAssistUI();
-      setScreen('assist');
-    }
-
-    function updateAssistUI() {
-      const { code, inferred, entry, stepIndex } = current;
-      // Header/Meta
-      if (code) detectedEl.textContent = `Erkannter Code: ${code}`;
-      else if (inferred.code) detectedEl.textContent = `Aus Text abgeleitet: ${inferred.code} (${inferred.confidence >= 2 ? 'hoch' : 'mittel'}e Sicherheit)`;
-      else detectedEl.textContent = 'Kein Code/Schlüsselwort erkannt – allgemeine Hilfe';
-
-      matchedWrap.innerHTML = '';
-      if (inferred.matched && inferred.matched.length) {
-        inferred.matched.forEach(m => {
-          const span = document.createElement('span');
-          span.className = 'badge';
-          span.textContent = m;
-          matchedWrap.appendChild(span);
-        });
-      }
-
-      // Erklärung
-      titleEl.textContent = entry.title;
-      erklaerungEl.innerHTML = '';
-      entry.erklaerung.forEach(t => {
-        const li = document.createElement('li');
-        li.textContent = t;
-        erklaerungEl.appendChild(li);
-      });
-
-      // Anleitung / Schritt
-      progressEl.textContent = `Schritt ${stepIndex + 1} von ${entry.steps.length}`;
-      stepTextEl.textContent = entry.steps[stepIndex].text;
-
-      illustrationEl.innerHTML = '';
-      const svgId = entry.steps[stepIndex].svg;
-      if (svgId) {
-        const tpl = document.getElementById(svgId);
-        if (tpl && 'content' in tpl) {
-          illustrationEl.appendChild(tpl.content.cloneNode(true));
+    </main>
+    <footer>
+        <div class="container">
+            <p>
+                <a href="impressum.html">Impressum</a> | 
+                <a href="datenschutz.html">Datenschutz</a> | 
+                <a href="kontakt.html">Kontakt</a>
+            </p>
+            <div class="social-icons">
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p>&copy; 2025 Print-Doc AI Prototyp. Erstellt für das Syntax Institut.</p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'de', includedLanguages: 'de,en,es,ar,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
         }
-      }
-
-      prevBtn.disabled = stepIndex === 0;
-      nextBtn.disabled = stepIndex >= entry.steps.length - 1;
-    }
-
-    function nextStep() {
-      if (current.stepIndex < current.entry.steps.length - 1) {
-        current.stepIndex++;
-        updateAssistUI();
-      }
-    }
-    function prevStep() {
-      if (current.stepIndex > 0) {
-        current.stepIndex--;
-        updateAssistUI();
-      }
-    }
-
-    function speakCurrent() {
-      if (!('speechSynthesis' in window)) return;
-      const text = current.entry.steps[current.stepIndex].text;
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'de-DE';
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    }
-
-    // --- Events ---
-    startBtn.addEventListener('click', startAssist);
-    backBtn.addEventListener('click', () => setScreen('start'));
-    nextBtn.addEventListener('click', nextStep);
-    prevBtn.addEventListener('click', prevStep);
-    speakBtn.addEventListener('click', speakCurrent);
-  </script>
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
